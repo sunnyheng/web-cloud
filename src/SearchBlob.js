@@ -12,7 +12,7 @@ const {RangePicker} = DatePicker;
 {/*This is search component and it include child component(table)*/}
 
 function SearchBlob() {
-
+  const ul = "http://172.20.10.2:30001"
   let[data, setData] = useState([])
   const [select_val, setSelectVal] = useState('ScenarioUser');
   let [type, setType] = useState('')
@@ -24,12 +24,12 @@ function SearchBlob() {
       let name = values.use_case_id
       let type = values.type
       setType(type)
-      const url_single = 'http://10.49.106.167:30001/readFile?name='+name+'&type='+type
-      const url_all = 'http://10.49.106.167:30001/readFile?type='+type
+      const url_single = ul +'/readFile?name='+name+'&type='+type
+      const url_all = ul + '/readFile?type='+type
 
-//      const url = name? url_single: url_all
+      const url = name? url_single: url_all
 //      console.log("url:", url)
-      const url = 'http://10.49.106.167:9090/mock/data.json'
+//      const url = 'http://10.49.106.68:9090/mock/data.json'
       fetch(url).then(res =>{
         console.log(res)
         if(res.status==200){

@@ -1,5 +1,5 @@
 
-import React, { useCallback, createContext, useState} from 'react';
+import React, { useCallback, createContext, useState, useRef } from 'react';
 import {Collapse, Button, Form, Input, Select, message, Divider} from 'antd';
 
 import locale from 'antd/es/locale/zh_CN';
@@ -17,7 +17,7 @@ const {TextArea} = Input
 {/*This is edit/update component and it include child component(table)*/}
 
 function UpdateForm() {
-
+  const childFormRef = useRef()
   const [form] = Form.useForm();
 
 // this is trigger in data in event('confirmWhenAuto','triggerCondition','triggerType','triggers')
@@ -61,17 +61,36 @@ function UpdateForm() {
 // upload data format
   const resolveDataFormat = () => {
     let formValues = form.getFieldsValue();
+
+//    console.log("=====================")
+//    console.log(formValues)
+//    console.log("=====================")
     if(triggerInData.length==0){
         message.error("Please save the trigger data, then upload data.")
     }
     else{
+
         let eventsJson = {};
+        let actions_in = {};
+
         let events = [];
-        triggerInData.actions.map((item) => delete item.index);
-        events.push(triggerInData);
+        triggerInData.map((item) => delete item.index);
+        actions_in["actions"] = triggerInData
+        const inForm = childFormRef.current.getTriggerForm()
+
+        console.log(inForm)
+        //todo add form data here
+        let event_in = Object.assign(inForm, actions_in)
+//        let event_in = actions_in
+        events.push(event_in)
         if(triggerOutData.length!=0 &&triggerOutData.actions.length!=0){
-            triggerOutData.actions.map((item) => delete item.index);
-            events.push(triggerOutData);
+            let actions_out = {};
+            triggerOutData.map((item) => delete item.index);
+            actions_out["actions"] = triggerOutData
+            // todo add form data here
+    //        let event_in = Object.assign(formValues, actions)
+            let event_out = actions_out
+            events.push(event_out);
         }
         else{
             message.success("Success! Empty trigger out data.")
@@ -79,13 +98,15 @@ function UpdateForm() {
         eventsJson["events"] = events
         let finalRe = Object.assign(formValues, eventsJson)
         setUploadContent(finalRe);
+        console.log('finalRe:', finalRe)
         console.log('uploadContent:', uploadContent)
     }
   }
 
   const uploadData = e =>{
     resolveDataFormat();
-    fetch('http://localhost:30001/upload',{
+    console.log("Test get the  updateContentL:", uploadContent)
+    fetch('http://172.20.10.2:30001/upload',{
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -97,6 +118,7 @@ function UpdateForm() {
         console.log(res)
         if(res.ok){
             res.json().then(data => {
+                parseData(uploadContent)
                 message.success("Uploaded scenario template: "+ data.file_name + " successfully.");
             })
         }
@@ -144,9 +166,11 @@ function UpdateForm() {
 
     let actionsIn = addIndex(events[0].actions);
     setTriggerInData(actionsIn);
+//    console.log("-----------------1", triggerInData)
     setInLength(actionsIn.length);
     let tmpInData = getFormData(events[0]);
     setTriggerInForm(tmpInData)
+//    console.log("-----------------2", triggerInForm)
 
     if(events.length ==2){
       let actionsOut = addIndex(events[1].actions);
@@ -170,39 +194,40 @@ function UpdateForm() {
         }
       }
     });
-    console.log("getFormData:", dataMap)
+//    console.log("getFormData:", dataMap)
     return dataMap;
   }
 
   const searchData = (values)=>{
-//      let id = values.id;
-//      let name = values.name;
-//      console.log("id:", id)
-//      if(!id && !name){
-//        message.warning("Please input id or name!")
-//      }
-//      else if(id){
-//        const type = 'ScenarioSquare';
-//        const url = 'http://localhost:30001/readFile?type='+type+'&name='+ id
-//        fetch(url).then(res =>{
-//          if(res.ok){
-//            res.json().then(reData => {
-//                parseData(reData)
-//            })
-//          }
-//          else{message.error("Not found")}
-//        })
-//      }
-
-    fetch('/mock/data.json').then(res => {
-      if(res.ok){
-        res.json()
-        .then(data =>{
-            console.log('data:', data)
-          parseData(data)
+      let id = values.id;
+      let name = values.name;
+      console.log("id:", id)
+      if(!id && !name){
+        message.warning("Please input id or name!")
+      }
+      else if(id){
+        const type = 'ScenarioSquare';
+        const url = 'http://172.20.10.2:30001/readFile?type='+type+'&name='+ id
+        fetch(url).then(res =>{
+          if(res.ok){
+            res.json().then(reData => {
+                console.log("111111:", reData)
+                parseData(reData)
+            })
+          }
+          else{message.error("Not found")}
         })
       }
-    })
+
+//    fetch('/mock/data.json').then(res => {
+//      if(res.ok){
+//        res.json()
+//        .then(data =>{
+//            console.log('data:', data)
+//          parseData(data)
+//        })
+//      }
+//    })
 
     }
 
@@ -240,7 +265,7 @@ function UpdateForm() {
             <Form.Item
               label="描述"
               name="description" >
-              <Input allowClear />
+              <Input allowClear style={{width: 500}}/>
             </Form.Item>
             <Form.Item
                 name="type"
@@ -302,11 +327,11 @@ function UpdateForm() {
       </Collapse>
 
       <Divider orientation="left" plain>triggerIn</Divider>
-      <TriggerForm dataSource={triggerInForm} setForm={handleInForm} />
+      <TriggerForm dataSource={triggerInForm} setForm={handleInForm} ref={childFormRef} />
       <EditableDraggableTable dataSource={triggerInData} length={inLength} setData={handleTriggerIn} setLength={setDataInLength} />
 
       <Divider orientation="left" plain>triggerOut</Divider>
-      <TriggerForm dataSource={triggerOutForm} setForm={handleOutForm} />
+
       <EditableDraggableTable dataSource={triggerOutData} length={outLength} setData={handleTriggerOut} setLength={setDataOutLength} />
 
     </div>

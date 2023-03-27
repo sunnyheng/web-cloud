@@ -32,7 +32,7 @@ const EditableDraggableTable = (props) => {
   let dataLength = props.length;
 
   const [form] = Form.useForm();
-  const ref = React.useRef()
+//  const ref = React.useRef()
 
   let triggerActions = props.actions;
   let actionLength = props.length;
@@ -68,6 +68,8 @@ const EditableDraggableTable = (props) => {
         {'value': 61, 'label':'设置空调状态'},
         {'value': 62, 'label':'设置空调自动模式'},
         {'value': 63, 'label':'设置空调A/C模式'},
+        {'value': 101, 'label':'恢复前排空调模式'},
+        {'value': 102, 'label':'恢复二排空调模式'},
       ],
       3:[
         {'value': 1, 'label':'设置主驾座椅位置'},
@@ -76,20 +78,29 @@ const EditableDraggableTable = (props) => {
       ],
       4:[
         {'value': 1, 'label':'设置氛围灯状态'},
-        {'value': 1, 'label':'设置氛围灯亮度'},
-        {'value': 1, 'label':'设置氛围灯颜色'},
-        {'value': 1, 'label':'恢复氛围灯状态'},
-        {'value': 1, 'label':'恢复氛围灯亮度'},
-        {'value': 1, 'label':'恢复氛围灯颜色'},
+        {'value': 2, 'label':'设置氛围灯亮度'},
+        {'value': 3, 'label':'设置氛围灯颜色'},
+        {'value': 11, 'label':'恢复氛围灯状态'},
+        {'value': 12, 'label':'恢复氛围灯亮度'},
+        {'value': 13, 'label':'恢复氛围灯颜色'},
       ],
       5:[
         {'value': 1, 'label':'设置遮阳顶棚位置'},
         {'value': 5, 'label':'设置前排遮阳顶棚位置'},
         {'value': 6, 'label':'设置后排遮阳顶棚位置'},
       ],
+      11:[
+        {'value': 1, 'label':'导航到固定地点'},
+        {'value': 3, 'label':'导航到用户自定义POI位置'},
+      ],
+      12:[
+        {'value': 1, 'label':'操作智能灯'},
+      ],
       101:[
         {'value': 1, 'label':'文言说明'},
         {'value': 2, 'label':'语音提示'},
+        {'value': 11, 'label':'延迟执行'},
+        {'value': 21, 'label':'启动(带倒计时)沉浸模式'},
       ],
       102:[
         {'value': 1, 'label':'延迟执行'},
@@ -98,6 +109,7 @@ const EditableDraggableTable = (props) => {
         {'value': 1, 'label':'开启沉浸模式'}
       ]
   }
+
   const showOptionsValues = (key) => {
     console.log('change option key:', key)
     let tmpOptions = allIdOptions[key]
@@ -113,6 +125,8 @@ const EditableDraggableTable = (props) => {
                 <Option value={3}>座椅模式</Option>
                 <Option value={4}>灯光模式</Option>
                 <Option value={5}>遮阳顶棚</Option>
+                <Option value={11}>导航控制命令</Option>
+                <Option value={12}>IOT控制命令</Option>
                 <Option value={101}>信息提示</Option>
                 <Option value={102}>延时控制</Option>
                 <Option value={103}>沉浸模式</Option>
@@ -128,8 +142,24 @@ const EditableDraggableTable = (props) => {
               </Select>
         );
     }
-    if(['param', 'resource'].includes(dataIndex)){
+    if("param"===dataIndex){
         return  <Input />;
+    }
+    if(dataIndex === "resource"){
+        return(
+            <Select placeholder="请选择">
+                <Option value={1}>一排左</Option>
+                <Option value={2}>一排右</Option>
+                <Option value={4}>二排左</Option>
+                <Option value={8}>二排右</Option>
+                <Option value={12}>二排</Option>
+                <Option value={16}>二排中间</Option>
+                <Option value={32}>三排左</Option>
+                <Option value={64}>三排右</Option>
+                <Option value={128}>三排中间</Option>
+              </Select>
+
+        );
     }
     else{
         return (
@@ -277,30 +307,25 @@ const EditableDraggableTable = (props) => {
   };
 
   const handleSave = () => {
-    let triggerFormData = ref.current.testSearch()
+//    let triggerFormData = ref.current.testSearch()
     // use then to get the result of Promise object
-    triggerFormData.then((re) =>{
-        if(dataSource.length>0 && re){
+        if(dataSource.length>0){
     //    console.log('child trigger1:', data);
-            let actions ={};
             let handleData = dataSource;
-            actions["actions"] = handleData;
-            console.log('action:', actions)
-            let event = Object.assign(re, actions)
-            console.log('event:', event)
-            props.handleTrigger(event);
-            message.success("Data is saved successfully.")
 
+            console.log('handleData:', handleData)
+            props.setData(handleData);
+            message.success("Data is saved successfully.")
         }
-        else if(dataSource.length>0 && ! re){
+        else if(dataSource.length>0){
             message.error("Please fulfilled the input.")
         }
         else{
             message.success("Data is saved successfully.")
-            props.handleTrigger([])
+            props.setData([])
         }
 //    console.log('child trigger after:', dataSource);
-    }).catch((err) => {console.log('Validate error:', err)})
+
   }
 
   const DraggableContainer = (props) => {
@@ -322,7 +347,7 @@ const EditableDraggableTable = (props) => {
     const row_index = dataSource.findIndex(
       (x) => x.index === restProps["data-row-key"]
     );
-    console.log('row_index:', row_index)
+//    console.log('row_index:', row_index)
     return (
       <>
           <SortableItem
@@ -345,6 +370,8 @@ const EditableDraggableTable = (props) => {
         case 3: return '座椅模式';
         case 4: return '灯光模式';
         case 5: return '遮阳顶棚';
+        case 11: return '导航控制命令';
+        case 12: return 'IOT控制命令';
         case 101: return '信息提示';
         case 102: return '延时控制';
         case 103: return '沉浸模式';
@@ -364,11 +391,24 @@ const EditableDraggableTable = (props) => {
     }
   }
 
+  const formatResource = (val, txt) => {
+    switch(val){
+        case 1: return '一排左';
+        case 2: return '一排右';
+        case 4: return '二排左';
+        case 8: return '二排右';
+        case 12: return '二排';
+        case 16: return '二排中间';
+        case 64: return '三排右';
+        case 128: return '三排中间';
+    }
+  }
+
   const columns = [
     {
         title: "Sort",
         dataIndex: "",
-        width: '4%',
+        width: '3%',
         className: "drag-visible",
         render: () => <DragHandle />,
     },
@@ -389,7 +429,7 @@ const EditableDraggableTable = (props) => {
     {
       title: '使能',
       dataIndex: 'enable',
-      width: '5%',
+      width: '4%',
       editable: true,
       render: (text, record) => formatBool(record.enable),
     },
@@ -403,7 +443,7 @@ const EditableDraggableTable = (props) => {
     {
       title: '恢复',
       dataIndex: 'needRecover',
-      width: '5%',
+      width: '4%',
       editable: true,
       render: (text, record) => formatBool(record.needRecover),
     },
@@ -416,8 +456,23 @@ const EditableDraggableTable = (props) => {
     {
       title: '资源',
       dataIndex: 'resource',
-      width: '7%',
+      width: '5%',
       editable: true,
+      render: (text, record) => formatResource(record.resource),
+    },
+    {
+      title: 'UI显示位置',
+      dataIndex: 'position',
+      width: '4%',
+      editable: true,
+//      render: (text, record) => formatBool(record.visibleToUser),
+    },
+    {
+      title: '用户可见',
+      dataIndex: 'visibleToUser',
+      width: '5%',
+      editable: true,
+      render: (text, record) => formatBool(record.visibleToUser),
     },
     {
       title: '编辑',

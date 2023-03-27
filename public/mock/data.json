@@ -1,1 +1,39 @@
-[{"author":"PATAC","createdTime":"2023-2-14 10:10:10 GMT+08:00","description":"为您调整主驾座椅，车窗，空调和氛围灯，并提供闹钟叫醒服务，营造沉浸式的休息体验","enable":true,"events":[{"actionDescription":"主驾座椅自动调节到小憩坐姿\n车窗全关\n天窗关闭\n主驾空调：AUTO，温度22°\n氛围灯：冰川蓝，亮度15%\n小憩时间：20分钟","actions":[{"category":103,"enable":true,"id":1,"isSupport":true,"needRecover":false,"param":"{ \"mode \": 1, \"countDown \": 5}","position":0,"visibleToUser":false},{"category":3,"enable":true,"id":1,"isSupport":true,"needRecover":true,"param":"50,50,50,50,50,50,50,50","position":0,"visibleToUser":false},{"category":101,"enable":false,"id":2,"isSupport":true,"needRecover":false,"param":"即将进入小憩模式，正在为您调节座椅，请放心休息，我将在20分钟后叫醒您，您也可以通过点击界面上的按键提前退出小憩模式","position":1,"visibleToUser":true},{"category":1,"enable":true,"id":5,"isSupport":true,"needRecover":false,"param":"100","position":4,"resource":5,"visibleToUser":true},{"category":5,"enable":true,"id":1,"isSupport":true,"needRecover":false,"param":"3","position":6,"visibleToUser":true},{"category":2,"enable":true,"id":62,"isSupport":true,"needRecover":false,"param":"true","position":8,"resource":1,"visibleToUser":true},{"category":2,"enable":true,"id":11,"isSupport":true,"needRecover":false,"param":"22.0","position":9,"resource":3,"visibleToUser":true},{"category":4,"enable":true,"id":3,"isSupport":true,"needRecover":true,"param":"#22E2C3","position":10,"visibleToUser":true},{"category":4,"enable":true,"id":2,"isSupport":true,"needRecover":true,"param":"63","position":10,"visibleToUser":true}],"confirmWhenAuto":true,"durationTime":{"time":20,"title":"小憩时间"},"triggerCondition":"AND","triggerType":1,"triggers":[]}],"id":1031,"isDrop":false,"lastUpdatedTime":"2023-03-07 18:09:18 GMT+08:00","name":"小憩模式","repeatTime":0,"storeId":0,"tagType":1,"type":"1","userId":"1234567890","version":1}]
+[
+	{
+    "id":1031,
+    "name":"小憩模式",
+    "description":"为您调整主驾座椅，车窗，空调和氛围灯，并提供闹钟叫醒服务，营造沉浸式的休息体验",
+    "author":"PATAC",
+    "createdTime":"2023-2-14 10:10:10 GMT+08:00",
+    "lastUpdatedTime":"2023-2-20 9:30:10 GMT+08:00",
+    "version":1,
+    "storeId":0,
+    "relationScenarios":[],
+    "userId":1234567890,
+    "type":1,
+    "enable":true,
+    "repeatTime":0,
+    "tagType":1,
+    "events":[
+        {
+            "triggers" : [],
+            "triggerType":1,
+            "triggerCondition":"AND",
+            "confirmWhenAuto":true,
+            "durationTime":{ "time":20, "title":"小憩时间" },
+            "actionDescription":"主驾座椅自动调节到小憩坐姿\n车窗全关\n天窗关闭\n主驾空调：AUTO，温度22°\n氛围灯：冰川蓝，亮度15%\n小憩时间：20分钟",
+            "actions" : [
+                { "category":101, "id":21, "position":0, "enable":true, "param":"{ \"mode \": 1, \"countDown \": 5}", "visibleToUser": false },
+                { "category":3, "id":1, "position":0, "enable":true, "param":"100.0,85.88,0.0,0.0,0.0,0.0,0.0,0.0", "needRecover":true, "visibleToUser":false },
+                { "category":101, "id":2, "position":1, "enable":true, "param":"即将进入小憩模式，正在为您调节座椅，车窗和氛围灯，我将在指定时间叫醒您，请安心休息" },
+                { "category":1, "id":5, "position":4, "enable":true, "param":"0", "resource":15 },
+                { "category":5, "id":1, "position":6, "enable":true, "param":"1" },
+                { "category":2, "id":62, "position":8, "enable":true, "param":"true", "resource":3 },
+                { "category":2, "id":11, "position":9, "enable":true, "param":"22.0", "resource":3 },
+                { "category":4, "id":3, "position":10, "enable":true, "param":"#5B70FF", "needRecover":true },
+                { "category":4, "id":2, "position":10, "enable":true, "param":"15", "needRecover":true }
+            ]
+        }
+    ]
+	}
+]

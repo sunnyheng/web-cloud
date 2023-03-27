@@ -1,29 +1,25 @@
-import React, { useState, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { Form, Input, Cascader, Select, Button } from 'antd';
 
+const {TextArea} = Input
 
-function TriggerForm(props){
+function SubForm(props, ref){
   const [form] = Form.useForm();
+  const formRef = useRef();
 //  let [formData] = useState(props.dataSource)
 //  console.log('TriggerForm data:', props.childData)
 
-//  useEffect(() => {
-//    form.setFieldsValue({
-//        triggerType: props.dataSource.triggerType,
-//        confirmWhenAuto: props.dataSource.confirmWhenAuto,
-//        triggers: props.dataSource.triggers,
-//        triggerCondition: props.dataSource.triggerCondition,
-//    })
-//
-//  },[])
 
-
-  form.setFieldsValue({
-        triggerType: props.dataSource.triggerType,
-        confirmWhenAuto: props.dataSource.confirmWhenAuto,
-        triggers: props.dataSource.triggers,
-        triggerCondition: props.dataSource.triggerCondition,
+    useEffect(() => {
+        form.setFieldsValue({
+            triggerType: props.dataSource.triggerType,
+            confirmWhenAuto: props.dataSource.confirmWhenAuto,
+            triggers: props.dataSource.triggers,
+            triggerCondition: props.dataSource.triggerCondition,
+            actionDescription: props.dataSource.actionDescription
+        })
     })
+
 
   const triggerOptions = [
                 {
@@ -46,6 +42,13 @@ function TriggerForm(props){
                 {label:'乘客侧窗户开启', value:113},
                 {label:'乘客侧窗户关闭', value:114},
                 {label:'检测下雨时触发', value:131},
+                {label:'低光束输出灯开', value:141},
+                {label:'低光束输出灯关', value:142},
+                {label:'刹车灯开', value:143},
+                {label:'刹车灯关', value:144},
+                {label:'高光束输出灯开', value:145},
+                {label:'低光束输出灯关', value:146},
+                {label:'制动踏板启动', value:201},
   ];
 
 //  const testSearch1 = async (props) => {
@@ -112,17 +115,49 @@ function TriggerForm(props){
 //  }
 //  }));
 
-  const test = () =>{
-    let triggerValues = form.getFieldsValue();
-    console.log('triggerValues:', triggerValues)
-  }
+const test = ()=>{
+console.log("======================")
+console.log(form.getFieldsValue())
+}
+
+  useImperativeHandle(ref, () => ({
+//  formFields: form.getFieldsValue()
+    getTriggerForm(){
+
+        let formValues = form.getFieldsValue();
+         console.log('formValue123:', form.getFieldsValue())
+        let triggers = formValues['triggers']
+//        console.log('triggers:', triggers)
+        const newTriggers = [];
+        if(triggers){
+            triggers.map((item, index) => {
+                let tmpDict = {};
+                if(item.length ==1){
+                    tmpDict['id']=item[0]
+                    newTriggers.push(tmpDict)
+                }
+                if(item.length ==2){
+                    tmpDict['id']=item[0]
+                    tmpDict['param']=item[1]
+                    newTriggers.push(tmpDict)
+                }
+            })
+        }
+        console.log('useImperativeHandle:', newTriggers)
+        formValues['triggers'] = newTriggers
+        console.log('formValue:', form.getFieldsValue())
+        return formValues;
+
+
+    }
+  }));
 
   return (
     <Form
         layout="inline"
         form={form}
-
         name="trigger_form"
+        ref={formRef}
         style={{
           marginBottom: 10,
         }}>
@@ -137,6 +172,7 @@ function TriggerForm(props){
         <Select
 
             placeholder="请选择"
+            value={props.dataSource.triggerType}
             options={[
               {label:'自动触发',
               value:0},{label:'手动触发',
@@ -159,20 +195,16 @@ function TriggerForm(props){
             style={{ width: 150,}}
             options={[
                 {label: "手动确认触发",
-                value: "true",},
+                value: true,},
                 {label: "不用确认",
-                value: "false",}
+                value: false,}
             ]}
         />
       </Form.Item>
       <Form.Item
         name="triggers"
         label="触发条件"
-        rules={[
-          {
-            required: true,
-            message: '不能为空',
-          },]} >
+      >
         <Cascader
             multiple
             allowClear
@@ -201,6 +233,11 @@ function TriggerForm(props){
             ]}
         />
       </Form.Item>
+      <Form.Item
+              label="动作描述"
+              name="actionDescription" >
+      <TextArea allowClear style={{width: 400}}/>
+    </Form.Item>
       <Button
         onClick={test}
         type="primary">save</Button>
@@ -208,5 +245,5 @@ function TriggerForm(props){
   );
 
 };
-
+const TriggerForm = forwardRef(SubForm);
 export default TriggerForm;
