@@ -21,7 +21,7 @@ const UploadForm = () => {
 //  })
 
   const showContent = (id) => {
-    const url = 'http://localhost:30001/readFile?type=ScenarioSquare&name=' + id
+    const url = 'http://20.239.59.174/:30001/readFile?type=ScenarioSquare&name=' + id
 //    const url = 'http://localhost:30001/readFile?name=user_vin_1001'
     fetch(url).then(res => {
       if(res.ok){
@@ -34,7 +34,7 @@ const UploadForm = () => {
   }
 
   const handleSubmit = e =>{
-    fetch('http://localhost:30001/upload',{
+    fetch('http://20.239.59.174:30001/upload',{
       method: 'POST',
       headers: {
         'Accept': 'application/json',

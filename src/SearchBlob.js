@@ -12,7 +12,7 @@ const {RangePicker} = DatePicker;
 {/*This is search component and it include child component(table)*/}
 
 function SearchBlob() {
-  const ul = "http://172.20.10.2:30001"
+  const ul = "http://20.239.59.174:30001"
   let[data, setData] = useState([])
   const [select_val, setSelectVal] = useState('ScenarioUser');
   let [type, setType] = useState('')
@@ -33,6 +33,7 @@ function SearchBlob() {
       fetch(url).then(res =>{
         console.log(res)
         if(res.status==200){
+            message.success('success')
             console.log("response:", res)
             res.json().then(data => {
                 console.log('data:', data)
@@ -40,7 +41,9 @@ function SearchBlob() {
             })
         }
         else{
-            message.error(res.statusText)}
+            message.error(res.statusText)
+            setData([])
+            }
       })
       .catch(err => {
         console.log(err);
@@ -91,14 +94,15 @@ function SearchBlob() {
               label="数据类型"
               name="type"
               initialValue={select_val}>
-            <Select
-              style={{ width: 180 }}
-              onChange={handleChange}
-              options={[
-                { value: 'ScenarioUser', label: '用户自定义场景' },
-                { value: 'ScenarioSquare', label: '广场模版数据' },
-              ]}
-            />
+              <Select
+                style={{ width: 180 }}
+                onChange={handleChange}
+                options={[
+                  { value: 'ScenarioSquare', label: '广场模版数据' },
+                  { value: 'ScenarioUser', label: '用户自定义场景' },
+
+                ]}
+              />
             </Form.Item>
             <Form.Item
               label="创建时间"

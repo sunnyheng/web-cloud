@@ -147,18 +147,38 @@ const EditableDraggableTable = (props) => {
     }
     if(dataIndex === "resource"){
         return(
-            <Select placeholder="请选择">
-                <Option value={1}>一排左</Option>
-                <Option value={2}>一排右</Option>
-                <Option value={4}>二排左</Option>
-                <Option value={8}>二排右</Option>
-                <Option value={12}>二排</Option>
-                <Option value={16}>二排中间</Option>
-                <Option value={32}>三排左</Option>
-                <Option value={64}>三排右</Option>
-                <Option value={128}>三排中间</Option>
+            <Select allowClear placeholder="请选择">
+                <Option key={2} value={1}>一排左</Option>
+                <Option key={3} value={2}>一排右</Option>
+                <Option key={4} value={3}>一排</Option>
+                <Option key={5} value={4}>二排左</Option>
+                <Option key={6} value={8}>二排右</Option>
+                <Option key={7} value={12}>二排</Option>
+                <Option key={8} value={16}>二排中间</Option>
+                <Option key={9} value={32}>三排左</Option>
+                <Option key={10} value={64}>三排右</Option>
+                <Option key={11} value={128}>三排中间</Option>
               </Select>
 
+        );
+    }
+    if(dataIndex === "position"){
+        return <InputNumber min={0} max={20} />
+    }
+    if(dataIndex === "visibleToUser"){
+        return (
+              <Select placeholder="请选择">
+                <Option value={undefined||true}>可见</Option>
+                <Option value={false}>不可见</Option>
+              </Select>
+        );
+    }
+    if(dataIndex === "needRecover"){
+        return (
+              <Select placeholder="请选择">
+                <Option value={true}>恢复</Option>
+                <Option value={undefined||false}>不恢复</Option>
+              </Select>
         );
     }
     else{
@@ -204,12 +224,6 @@ const EditableDraggableTable = (props) => {
               required: true,
               message: '不能为空',
             },]}
-//          rules={[
-//            {
-//              required: true,
-//              message: `Please Input ${title}!`,
-//            },
-//          ]}
         >
           {inputNode}
         </Form.Item>
@@ -391,10 +405,29 @@ const EditableDraggableTable = (props) => {
     }
   }
 
-  const formatResource = (val, txt) => {
+  const formatVisible = (val) => {
+    if(val == undefined || val){
+        return '可见';
+    }
+    if(!val){
+        return '不可见';
+    }
+  }
+
+  const formatRecover = (val) => {
+    if(val == undefined || !val){
+        return '不恢复';
+    }
+    if(val){
+        return '恢复';
+    }
+  }
+
+  const formatResource = (val) => {
     switch(val){
         case 1: return '一排左';
         case 2: return '一排右';
+        case 3: return '一排';
         case 4: return '二排左';
         case 8: return '二排右';
         case 12: return '二排';
@@ -433,19 +466,19 @@ const EditableDraggableTable = (props) => {
       editable: true,
       render: (text, record) => formatBool(record.enable),
     },
-    {
-      title: '功能支持',
-      dataIndex: 'isSupport',
-      width: '5%',
-      editable: true,
-      render: (text, record) => formatBool(record.isSupport),
-    },
+//    {
+//      title: '功能支持',
+//      dataIndex: 'isSupport',
+//      width: '5%',
+//      editable: true,
+//      render: (text, record) => formatBool(record.isSupport),
+//    },
     {
       title: '恢复',
       dataIndex: 'needRecover',
       width: '4%',
       editable: true,
-      render: (text, record) => formatBool(record.needRecover),
+      render: (text, record) => formatRecover(record.needRecover),
     },
     {
       title: '参数',
@@ -472,12 +505,12 @@ const EditableDraggableTable = (props) => {
       dataIndex: 'visibleToUser',
       width: '5%',
       editable: true,
-      render: (text, record) => formatBool(record.visibleToUser),
+      render: (text, record) => formatVisible(record.visibleToUser),
     },
     {
       title: '编辑',
       dataIndex: 'operation',
-      width: '9%',
+      width: '7%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -544,7 +577,7 @@ const EditableDraggableTable = (props) => {
         dataSource={dataSource}
         columns={mergedColumns}
         rowClassName="editable-row"
-        rowKey='index'
+        rowKey={dataSource=>dataSource.index}
 //        rowKey={(record) => record.category}
         pagination={false}
       />

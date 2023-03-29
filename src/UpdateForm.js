@@ -56,16 +56,17 @@ function UpdateForm() {
   }
 
 // the final data uploaded to azure blob
-  let [uploadContent, setUploadContent] = useState('');
+  let [uploadContent, setUploadContent] = useState([]);
 
 // upload data format
-  const resolveDataFormat = () => {
+  const resolveDataFormat = (e) => {
+    let finalRe = {};
     let formValues = form.getFieldsValue();
 
 //    console.log("=====================")
 //    console.log(formValues)
 //    console.log("=====================")
-    if(triggerInData.length==0){
+    if(triggerInData.length===0){
         message.error("Please save the trigger data, then upload data.")
     }
     else{
@@ -78,14 +79,13 @@ function UpdateForm() {
         actions_in["actions"] = triggerInData
         const inForm = childFormRef.current.getTriggerForm()
 
-        console.log(inForm)
         //todo add form data here
         let event_in = Object.assign(inForm, actions_in)
 //        let event_in = actions_in
         events.push(event_in)
-        if(triggerOutData.length!=0 &&triggerOutData.actions.length!=0){
+        if(triggerOutData.length!==0 &&triggerOutData.actions.length!==0){
             let actions_out = {};
-            triggerOutData.map((item) => delete item.index);
+//            triggerOutData.map((item) => delete item.index);
             actions_out["actions"] = triggerOutData
             // todo add form data here
     //        let event_in = Object.assign(formValues, actions)
@@ -96,33 +96,37 @@ function UpdateForm() {
             message.success("Success! Empty trigger out data.")
         }
         eventsJson["events"] = events
-        let finalRe = Object.assign(formValues, eventsJson)
-        setUploadContent(finalRe);
+        finalRe = Object.assign(formValues, eventsJson)
+//        setUploadContent(finalRe);
         console.log('finalRe:', finalRe)
-        console.log('uploadContent:', uploadContent)
+//        console.log('uploadContent:', uploadContent)
+        return finalRe;
     }
   }
 
   const uploadData = e =>{
-    resolveDataFormat();
-    console.log("Test get the  updateContentL:", uploadContent)
-    fetch('http://172.20.10.2:30001/upload',{
+    let result = resolveDataFormat(e);
+
+    fetch('http://20.239.59.174:30001/upload',{
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(uploadContent)
+      body: JSON.stringify(result)
     })
     .then(res => {
-        console.log(res)
+        console.log("123456789")
+//        console.log(res)
         if(res.ok){
             res.json().then(data => {
-                parseData(uploadContent)
+                console.log("response data:", data)
                 message.success("Uploaded scenario template: "+ data.file_name + " successfully.");
+                let responseData = JSON.parse(data.content)
+                parseData(responseData)
             })
         }
-        else if(res.status == 400){
+        else if(res.status === 400){
           console.log('Uploaded data invalid.')
           message.error(res.statusText + ". Reason: Uploaded data invalid");
         }
@@ -172,7 +176,7 @@ function UpdateForm() {
     setTriggerInForm(tmpInData)
 //    console.log("-----------------2", triggerInForm)
 
-    if(events.length ==2){
+    if(events.length ===2){
       let actionsOut = addIndex(events[1].actions);
       setTriggerOutData(actionsOut);
       setInLength(actionsOut.length);
@@ -184,10 +188,10 @@ function UpdateForm() {
   const getFormData = (triggerJson) =>{
     let dataMap = {};
     Object.keys(triggerJson).forEach(function(key) {
-      if(key != "actions"){
+      if(key !== "actions"){
         dataMap[key] = triggerJson[key];
       }
-      if(key == "triggers"){
+      if(key === "triggers"){
         let tmpArray = [];
         for(let i=0; i<triggerJson[key].length; i++){
 
@@ -198,20 +202,21 @@ function UpdateForm() {
     return dataMap;
   }
 
-  const searchData = (values)=>{
-      let id = values.id;
-      let name = values.name;
+  const searchData = ()=>{
+      let id = form.getFieldsValue().id
+//  let bb = aa.
       console.log("id:", id)
-      if(!id && !name){
+      if(!id){
         message.warning("Please input id or name!")
       }
       else if(id){
         const type = 'ScenarioSquare';
-        const url = 'http://172.20.10.2:30001/readFile?type='+type+'&name='+ id
+        const url = 'http://20.239.59.174:30001/readFile?type='+type+'&name='+ id
         fetch(url).then(res =>{
           if(res.ok){
             res.json().then(reData => {
                 console.log("111111:", reData)
+//                setUploadContent(reData)
                 parseData(reData)
             })
           }
@@ -242,20 +247,31 @@ function UpdateForm() {
                 name="basic"
                 form={form}
                 initialValues={{remember: true}}
-                onFinish={searchData}
+//                onFinish={searchData}
                 >
             <Form.Item
               label="模板编号"
-              name="id" >
+              name="id"
+              /*rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]}*/
+            >
               <Input allowClear />
             </Form.Item>
             <Form.Item
               label="模板名称"
-              name="name" >
+              name="name"
+              /*rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]}*/>
               <Input allowClear />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">查询</Button>
+              <Button type="primary" htmlType="submit" onClick={searchData}>查询</Button>
               <Button style={{
                         marginLeft: 5,
                         }}
@@ -264,7 +280,12 @@ function UpdateForm() {
             <Divider />
             <Form.Item
               label="描述"
-              name="description" >
+              name="description"
+              /*rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]}*/>
               <Input allowClear style={{width: 500}}/>
             </Form.Item>
             <Form.Item

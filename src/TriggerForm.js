@@ -16,7 +16,8 @@ function SubForm(props, ref){
             confirmWhenAuto: props.dataSource.confirmWhenAuto,
             triggers: props.dataSource.triggers,
             triggerCondition: props.dataSource.triggerCondition,
-            actionDescription: props.dataSource.actionDescription
+            actionDescription: props.dataSource.actionDescription,
+            durationTime: props.dataSource.durationTime
         })
     })
 
@@ -195,9 +196,9 @@ console.log(form.getFieldsValue())
             style={{ width: 150,}}
             options={[
                 {label: "手动确认触发",
-                value: true,},
+                value: "true",},
                 {label: "不用确认",
-                value: false,}
+                value: "false",}
             ]}
         />
       </Form.Item>
@@ -236,8 +237,13 @@ console.log(form.getFieldsValue())
       <Form.Item
               label="动作描述"
               name="actionDescription" >
-      <TextArea allowClear style={{width: 400}}/>
-    </Form.Item>
+          <TextArea allowClear style={{width: 400}}/>
+      </Form.Item>
+      <Form.Item
+              label="持续时间"
+              name="durationTime" >
+          <Input allowClear style={{width: 400}}/>
+      </Form.Item>
       <Button
         onClick={test}
         type="primary">save</Button>

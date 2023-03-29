@@ -11,19 +11,24 @@ const BlobTable = (props) => {
 
     const columns = [
       {
-        title: 'Id',
+        title: '场景ID',
         dataIndex: 'id',
         key: 'id',
       },
       {
-        title: 'Name',
+        title: '场景名',
         dataIndex: 'name',
         key: 'name',
       },
       {
-        title: 'Description',
+        title: '描述',
         dataIndex: 'description',
         key: 'description',
+      },
+      {
+        title: '更改时间',
+        dataIndex: 'lastUpdatedTime',
+        key: 'lastUpdatedTime',
       },
       {
         title: '预览',
@@ -45,7 +50,7 @@ const BlobTable = (props) => {
     const delRecord = (record) =>{
         console.log('id:', record.id)
         console.log('delete type:', type)
-        let url = 'http://10.49.106.167:30001/delete'+'?id=' +record.id+ '&type='+type
+        let url = 'http://20.239.59.174:30001/delete'+'?id=' +record.id+ '&type='+type
         fetch(url,{
         method:'DELETE',
         }).then(res =>{
