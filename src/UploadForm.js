@@ -34,7 +34,7 @@ const UploadForm = () => {
   }
 
   const handleSubmit = e =>{
-    fetch('http://20.239.59.174:30001/upload',{
+    fetch('http://20.239.59.174:30001/upload1',{
       method: 'POST',
       headers: {
         'Accept': 'application/json',

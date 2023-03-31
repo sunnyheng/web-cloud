@@ -244,9 +244,7 @@ console.log(form.getFieldsValue())
               name="durationTime" >
           <Input allowClear style={{width: 400}}/>
       </Form.Item>
-      <Button
-        onClick={test}
-        type="primary">save</Button>
+
     </Form>
   );
 

@@ -211,7 +211,7 @@ function UpdateForm() {
       }
       else if(id){
         const type = 'ScenarioSquare';
-        const url = 'http://20.239.59.174:30001/readFile?type='+type+'&name='+ id
+        const url = 'http://20.239.59.174:30001/readFile1?type='+type+'&name='+ id
         fetch(url).then(res =>{
           if(res.ok){
             res.json().then(reData => {
@@ -299,9 +299,10 @@ function UpdateForm() {
                 <Select
                     placeholder="请选择"
                     options={[
-                      {label:'不可变数据',
-                      value:0},{label:'预设数据',
+                      {label:'预设数据',
                       value:1},
+                      {label:'不可变数据',
+                      value:0},
                     ]}
                 />
             </Form.Item>
@@ -316,9 +317,10 @@ function UpdateForm() {
                 <Select
                     placeholder="请选择"
                     options={[
-                      {label:'不是',
-                      value:false},{label:'是',
+                    {label:'是',
                       value:true},
+                      {label:'不是',
+                      value:false},
                     ]}
                 />
             </Form.Item>

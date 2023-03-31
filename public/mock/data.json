@@ -19,7 +19,7 @@
             "triggers" : [],
             "triggerType":1,
             "triggerCondition":"AND",
-            "confirmWhenAuto":true,
+            "confirmWhenAuto":"true",
             "durationTime":{ "time":20, "title":"小憩时间" },
             "actionDescription":"主驾座椅自动调节到小憩坐姿\n车窗全关\n天窗关闭\n主驾空调：AUTO，温度22°\n氛围灯：冰川蓝，亮度15%\n小憩时间：20分钟",
             "actions" : [

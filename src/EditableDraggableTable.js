@@ -1,4 +1,4 @@
-import { Form, InputNumber, Popconfirm, Table, Typography, Input, Select, Button, message, Divider } from 'antd';
+import { Form, InputNumber, Popconfirm, Table, Typography, Input, Select, Button, message, Divider, Space } from 'antd';
 import React, { useState, useEffect, useContext } from 'react';
 
 import {
@@ -42,6 +42,9 @@ const EditableDraggableTable = (props) => {
 
   const [options, setOptions] = useState([])
 //  const [idSelectValue, setIdSelectValue] = useState([])
+
+  const [categoryId, setCategoryId] = useState(0)
+  const [actionId, setActionId] = useState(0)
 
   const allIdOptions = {
       1: [
@@ -114,28 +117,34 @@ const EditableDraggableTable = (props) => {
     console.log('change option key:', key)
     let tmpOptions = allIdOptions[key]
     setOptions(tmpOptions)
+    setCategoryId(key)
+  }
+
+  const showActionId = (key) => {
+    console.log('Change action id:', key)
+    setActionId(key)
   }
 
   const nodeElement = (dataIndex) =>{
     if(dataIndex ==='category'){
         return (
-              <Select placeholder="请选择" onChange={showOptionsValues}>
-                <Option value={1}>窗户</Option>
-                <Option value={2}>空调模式</Option>
-                <Option value={3}>座椅模式</Option>
-                <Option value={4}>灯光模式</Option>
-                <Option value={5}>遮阳顶棚</Option>
-                <Option value={11}>导航控制命令</Option>
-                <Option value={12}>IOT控制命令</Option>
-                <Option value={101}>信息提示</Option>
-                <Option value={102}>延时控制</Option>
-                <Option value={103}>沉浸模式</Option>
+              <Select placeholder="选择" onChange={showOptionsValues}>
+                <Option key={1} value={1}>窗户</Option>
+                <Option key={3} value={3}>座椅模式</Option>
+                <Option key={2} value={2}>空调模式</Option>
+                <Option key={4} value={4}>灯光模式</Option>
+                <Option key={5} value={5}>遮阳顶棚</Option>
+                <Option key={11} value={11}>导航控制命令</Option>
+                <Option key={12} value={12}>IOT控制命令</Option>
+                <Option key={101} value={101}>信息提示</Option>
+                <Option key={102}n value={102}>延时控制</Option>
+                <Option key={103} value={103}>沉浸模式</Option>
               </Select>
         );
     }
     if(dataIndex === 'id'){
         return (
-              <Select placeholder="请选择">
+              <Select placeholder="选择" onChange={showActionId}>
                 {options.map((item) =>
                     <Option key={item.value} value={item.value}>{item.label}</Option>
                 )}
@@ -143,21 +152,31 @@ const EditableDraggableTable = (props) => {
         );
     }
     if("param"===dataIndex){
-        return  <Input />;
+        if(categoryId ===3 && (actionId===1||actionId===11)){
+            return <Input allowClear placeholder="座椅, 靠背, 靠背支撑, 脚靠, 前坐垫, 后坐垫,头枕,腿枕" />;
+        }
+        if(categoryId ===1 && [1,2,3,4,5].includes(actionId)){
+            return <Input allowClear placeholder="车窗设置值0-100" />;
+        }
+        else{
+            return  <Input allowClear />;
+        }
+
     }
     if(dataIndex === "resource"){
         return(
-            <Select allowClear placeholder="请选择">
-                <Option key={2} value={1}>一排左</Option>
-                <Option key={3} value={2}>一排右</Option>
-                <Option key={4} value={3}>一排</Option>
-                <Option key={5} value={4}>二排左</Option>
-                <Option key={6} value={8}>二排右</Option>
-                <Option key={7} value={12}>二排</Option>
-                <Option key={8} value={16}>二排中间</Option>
-                <Option key={9} value={32}>三排左</Option>
-                <Option key={10} value={64}>三排右</Option>
-                <Option key={11} value={128}>三排中间</Option>
+            <Select allowClear placeholder="选择">
+                <Option key={15} value={15}>二排全部</Option>
+                <Option key={1} value={1}>一排左</Option>
+                <Option key={2} value={2}>一排右</Option>
+                <Option key={3} value={3}>一排</Option>
+                <Option key={4} value={4}>二排左</Option>
+                <Option key={8} value={8}>二排右</Option>
+                <Option key={12} value={12}>二排</Option>
+                <Option key={16} value={16}>二排中间</Option>
+                <Option key={32} value={32}>三排左</Option>
+                <Option key={64} value={64}>三排右</Option>
+                <Option key={128} value={128}>三排中间</Option>
               </Select>
 
         );
@@ -167,7 +186,7 @@ const EditableDraggableTable = (props) => {
     }
     if(dataIndex === "visibleToUser"){
         return (
-              <Select placeholder="请选择">
+              <Select placeholder="选择">
                 <Option value={undefined||true}>可见</Option>
                 <Option value={false}>不可见</Option>
               </Select>
@@ -175,15 +194,15 @@ const EditableDraggableTable = (props) => {
     }
     if(dataIndex === "needRecover"){
         return (
-              <Select placeholder="请选择">
-                <Option value={true}>恢复</Option>
-                <Option value={undefined||false}>不恢复</Option>
+              <Select placeholder="选择">
+                <Option value={undefined||false}>否</Option>
+                <Option value={true}>是</Option>
               </Select>
         );
     }
     else{
         return (
-              <Select placeholder="请选择">
+              <Select placeholder="选择">
                 <Option value={true}>是</Option>
                 <Option value={false}>否</Option>
               </Select>
@@ -306,6 +325,7 @@ const EditableDraggableTable = (props) => {
   const handleDelete = (index) => {
     const newData = dataSource.filter((item) => item.index !== index);
     props.setData(newData);
+    setEditingKey('');
   };
 
   const handleAdd = () => {
@@ -416,10 +436,10 @@ const EditableDraggableTable = (props) => {
 
   const formatRecover = (val) => {
     if(val == undefined || !val){
-        return '不恢复';
+        return '否';
     }
     if(val){
-        return '恢复';
+        return '是';
     }
   }
 
@@ -430,8 +450,10 @@ const EditableDraggableTable = (props) => {
         case 3: return '一排';
         case 4: return '二排左';
         case 8: return '二排右';
-        case 12: return '二排';
+        case 12: return '第二排';
+        case 15: return '二排全部';
         case 16: return '二排中间';
+        case 32: return '三排左';
         case 64: return '三排右';
         case 128: return '三排中间';
     }
@@ -448,21 +470,21 @@ const EditableDraggableTable = (props) => {
     {
       title: '分类',
       dataIndex: 'category',
-      width: '5%',
+      width: '4%',
       editable: true,
       render: (text, record) => formatCategory(record.category),
     },
     {
       title: '执行动作',
       dataIndex: 'id',
-      width: '12%',
+      width: '11%',
       editable: true,
       render: (text, record) => formatId(record),
     },
     {
       title: '使能',
       dataIndex: 'enable',
-      width: '4%',
+      width: '3%',
       editable: true,
       render: (text, record) => formatBool(record.enable),
     },
@@ -474,7 +496,7 @@ const EditableDraggableTable = (props) => {
 //      render: (text, record) => formatBool(record.isSupport),
 //    },
     {
-      title: '恢复',
+      title: '是否恢复',
       dataIndex: 'needRecover',
       width: '4%',
       editable: true,
@@ -483,27 +505,27 @@ const EditableDraggableTable = (props) => {
     {
       title: '参数',
       dataIndex: 'param',
-      width: '20%',
+      width: '40%',
       editable: true,
     },
     {
       title: '资源',
       dataIndex: 'resource',
-      width: '5%',
+      width: '3%',
       editable: true,
       render: (text, record) => formatResource(record.resource),
     },
     {
-      title: 'UI显示位置',
+      title: 'UI位置',
       dataIndex: 'position',
-      width: '4%',
+      width: '2%',
       editable: true,
 //      render: (text, record) => formatBool(record.visibleToUser),
     },
     {
       title: '用户可见',
       dataIndex: 'visibleToUser',
-      width: '5%',
+      width: '3%',
       editable: true,
       render: (text, record) => formatVisible(record.visibleToUser),
     },
