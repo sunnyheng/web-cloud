@@ -1,6 +1,7 @@
 import { Form, InputNumber, Popconfirm, Table, Typography, Input, Select, Button, message, Divider, Space } from 'antd';
-import React, { useState, useEffect, useContext } from 'react';
-
+import React, { useState, useEffect, useContext, callback } from 'react';
+import { SketchPicker } from 'react-color';
+//import { Colorpicker, ColorpickerValue, AnyColorFormat } from 'antd-colorpicker'
 import {
   SortableContainer,
   SortableElement,
@@ -45,6 +46,10 @@ const EditableDraggableTable = (props) => {
 
   const [categoryId, setCategoryId] = useState(0)
   const [actionId, setActionId] = useState(0)
+  const [visibleUser, setVisibleUser] = useState(0)
+  const [positionVal, setPositionVal] = useState(1)
+
+  const [color, setColor] = useState('#333');
 
   const allIdOptions = {
       1: [
@@ -53,7 +58,7 @@ const EditableDraggableTable = (props) => {
         {'value': 3, 'label':'设置二排左车窗位置'},
         {'value': 4, 'label':'设置二排右车窗位置'},
         {'value': 5, 'label':'设置所有车窗位置'},
-        {'value': 11, 'label':'设置后排遮阳帘位置'},
+        {'value': 11, 'label':'设置后排遮阳帘'},
       ],
       2:[
         {'value': 1, 'label':'设置前排空调状态'},
@@ -125,19 +130,38 @@ const EditableDraggableTable = (props) => {
     setActionId(key)
   }
 
+  const showVisibleUser = (key) => {
+    console.log("Testing get the showVisibleUser key:", key)
+    setVisibleUser(key)
+    if(key===false){
+        setPositionVal(0)
+    }
+  }
+
+  const showPosition = (key) => {
+    console.log("Testing get the showPosition key:", key)
+    setPositionVal(key)
+    if(key===0){
+        setVisibleUser(false)
+    }
+    if(key>0){
+        setVisibleUser(true)
+    }
+  }
+
   const nodeElement = (dataIndex) =>{
     if(dataIndex ==='category'){
         return (
               <Select placeholder="选择" onChange={showOptionsValues}>
-                <Option key={1} value={1}>窗户</Option>
-                <Option key={3} value={3}>座椅模式</Option>
-                <Option key={2} value={2}>空调模式</Option>
-                <Option key={4} value={4}>灯光模式</Option>
-                <Option key={5} value={5}>遮阳顶棚</Option>
-                <Option key={11} value={11}>导航控制命令</Option>
-                <Option key={12} value={12}>IOT控制命令</Option>
+                <Option key={1} value={1}>车窗</Option>
+                <Option key={3} value={3}>座椅</Option>
+                <Option key={2} value={2}>空调</Option>
+                <Option key={4} value={4}>氛围灯</Option>
+                <Option key={5} value={5}>天窗</Option>
+                <Option key={11} value={11}>导航</Option>
+                <Option key={12} value={12}>智能家居</Option>
                 <Option key={101} value={101}>信息提示</Option>
-                <Option key={102}n value={102}>延时控制</Option>
+                <Option key={102} value={102}>延时控制</Option>
                 <Option key={103} value={103}>沉浸模式</Option>
               </Select>
         );
@@ -152,15 +176,97 @@ const EditableDraggableTable = (props) => {
         );
     }
     if("param"===dataIndex){
-        if(categoryId ===3 && (actionId===1||actionId===11)){
-            return <Input allowClear placeholder="座椅, 靠背, 靠背支撑, 脚靠, 前坐垫, 后坐垫,头枕,腿枕" />;
+        if(categoryId ===1){
+            if([1,2,3,4,5].includes(actionId)){
+                return <Input allowClear placeholder="车窗设置值0-100" />;
+            }
+            if(actionId===11){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key="1-11-1" value={true}>全开</Option>
+                    <Option key="1-11-2" value={false}>全关</Option>
+                  </Select>
+                )
+            }
         }
-        if(categoryId ===1 && [1,2,3,4,5].includes(actionId)){
-            return <Input allowClear placeholder="车窗设置值0-100" />;
+//        if(categoryId===2){
+//            if(actionId===11||actionId==33){
+//            }
+//        }
+
+        if(categoryId ===3){
+            if(actionId===1||actionId===11){
+                return <Input allowClear placeholder="座椅, 靠背, 靠背支撑, 脚靠, 前坐垫, 后坐垫,头枕,腿枕" />;
+            }
+            if(actionId===21){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key="3-21-1" value={true}>进入</Option>
+                    <Option key="3-21-2" value={false}>退出</Option>
+                  </Select>
+                )
+            }
         }
-        else{
-            return  <Input allowClear />;
+        if(categoryId===4){
+            if(actionId===1){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key={1} value={true}>打开</Option>
+                    <Option key={2} value={false}>关闭</Option>
+                  </Select>
+                )
+            }
+            if(actionId===2){
+                return <InputNumber min={5} max={100} />
+            }
+            if(actionId===3){
+                return <SketchPicker color={color} onChangeComplete={(color: any)=>setColor(color.hex)} />
+            }
+            else{ //11，12，13
+                return <Input placeholder="颜色" />;
+            }
         }
+        if(categoryId===5){
+            if(actionId===1){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key="5-1-1" value={1}>全关</Option>
+                    <Option key="5-1-2" value={2}>全开</Option>
+                    <Option key="5-1-3" value={3}>通风</Option>
+                  </Select>
+                )
+            }
+            if(actionId===6){
+                return <InputNumber min={0} max={100} />
+            }
+            else{
+                <Input placeholder="前遮阳帘位置" />;
+            }
+        }
+        if(categoryId===11){
+            if(actionId===1){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key={1} value={1}>家</Option>
+                    <Option key={2} value={2}>公司</Option>
+                  </Select>
+                )
+            }
+            if(actionId===3){
+                return <Input placeholder="导航自定义POI位置" />;
+            }
+        }
+        if(categoryId===12){
+            if(actionId===1){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key={1} value={false}>关闭</Option>
+                    <Option key={2} value={true}>打开</Option>
+                  </Select>
+                )
+            }
+        }
+
 
     }
     if(dataIndex === "resource"){
@@ -182,11 +288,11 @@ const EditableDraggableTable = (props) => {
         );
     }
     if(dataIndex === "position"){
-        return <InputNumber min={0} max={20} />
+        return <InputNumber min={0} max={20} onChange={showPosition}/>
     }
     if(dataIndex === "visibleToUser"){
         return (
-              <Select placeholder="选择">
+              <Select placeholder="选择" onChange={showVisibleUser}>
                 <Option value={undefined||true}>可见</Option>
                 <Option value={false}>不可见</Option>
               </Select>
@@ -211,47 +317,41 @@ const EditableDraggableTable = (props) => {
   }
 
   const EditableCell = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-//  const inputNode = inputType === 'boolean' ?
-//    <Input.Group compact>
-//      <Select defaultValue={false}>
-//        <Option value={true}>yes</Option>
-//        <Option value={false}>no</Option>
-//      </Select>
-//    </Input.Group> : <Input />;
-    const inputNode = nodeElement(dataIndex);
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={dataIndex ==='resource' ? [{
-              required: false,
-              message: '为空',
-            },]: [{
-              required: true,
-              message: '不能为空',
-            },]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
+      editing,
+      dataIndex,
+      title,
+      inputType,
+      record,
+      index,
+      children,
+      ...restProps
+  }) => {
+      const inputNode = nodeElement(dataIndex);
+      return (
+        <td {...restProps}>
+          {editing ? (
+            <Form.Item
+              name={dataIndex}
+              style={{
+                margin: 0,
+              }}
+//              initialValue={1}
+              rules={dataIndex ==='resource' ? [{
+                  required: false,
+                  message: '为空',
+                },]: [{
+                  required: true,
+                  message: '不能为空',
+                },]}
+            >
+              {inputNode}
+            </Form.Item>
+          ) : (
+            children
+          )}
+        </td>
+      );
+  };
 
   const isEditing = (record) => record.index === editingKey;
 
@@ -263,15 +363,24 @@ const EditableDraggableTable = (props) => {
     let categoryId = record.category;
     if(categoryId){
         setOptions(allIdOptions[categoryId]);
+        setCategoryId(categoryId)
+    }
+    if(record.id){
+        setActionId(record.id)
     }
   };
   // saveCell
   const saveCell = async (key) => {
+
     try {
       const row = await form.validateFields();
+      console.log("key:", key)
+      console.log("key:", form.getFieldsValue())
+//      if((row.position===0 && row.visibleToUser===true)||(row.position>0 && row.visibleToUser===false)){
 
       const newData = [...dataSource];
       const index = newData.findIndex((item) => key === item.index);
+
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
@@ -285,9 +394,10 @@ const EditableDraggableTable = (props) => {
         props.setData(newData);
         setEditingKey('');
       }
-      console.log("row:", row)
+      console.log("row2:", row)
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
+      console.log('Validate Failed:', typeof(errInfo));
     }
   };
 
@@ -309,9 +419,9 @@ const EditableDraggableTable = (props) => {
 
   const onSortEnd = ({oldIndex, newIndex} ) => {
     let tempDataSource = dataSource;
-    console.log('onSortEnd oldIndex:', oldIndex)
-    console.log('onSortEnd newIndex:', newIndex)
-    console.log('onSortEnd dataSource:', dataSource)
+//    console.log('onSortEnd oldIndex:', oldIndex)
+//    console.log('onSortEnd newIndex:', newIndex)
+//    console.log('onSortEnd dataSource:', dataSource)
     if (oldIndex !== newIndex) {
         let movingItem = tempDataSource[oldIndex]
 
@@ -334,7 +444,16 @@ const EditableDraggableTable = (props) => {
     const newData = {
 //      key: newAddedKey,
       index: currentLen,
+      category: 1,
+      id: "",
+      enable: "",
+      needRecover: "",
+
+      resource: 1,
+      position: currentLen,
+      visibleToUser: true,
     };
+    console.log('newData:', newData)
     props.setData([...dataSource, newData]);
     props.setLength(currentLen)
     setEditingKey(currentLen);
@@ -399,13 +518,13 @@ const EditableDraggableTable = (props) => {
 
   const formatCategory = (val, txt) => {
     switch(val){
-        case 1: return '窗户';
-        case 2: return '空调模式';
-        case 3: return '座椅模式';
-        case 4: return '灯光模式';
-        case 5: return '遮阳顶棚';
-        case 11: return '导航控制命令';
-        case 12: return 'IOT控制命令';
+        case 1: return '车窗';
+        case 2: return '空调';
+        case 3: return '座椅';
+        case 4: return '氛围灯';
+        case 5: return '天窗';
+        case 11: return '导航';
+        case 12: return '智能家居';
         case 101: return '信息提示';
         case 102: return '延时控制';
         case 103: return '沉浸模式';
@@ -426,6 +545,7 @@ const EditableDraggableTable = (props) => {
   }
 
   const formatVisible = (val) => {
+    console.log("Testing formatVisible:", val)
     if(val == undefined || val){
         return '可见';
     }
@@ -470,7 +590,7 @@ const EditableDraggableTable = (props) => {
     {
       title: '分类',
       dataIndex: 'category',
-      width: '4%',
+      width: '5%',
       editable: true,
       render: (text, record) => formatCategory(record.category),
     },
@@ -480,6 +600,7 @@ const EditableDraggableTable = (props) => {
       width: '11%',
       editable: true,
       render: (text, record) => formatId(record),
+      responsive: ['md'],
     },
     {
       title: '使能',
@@ -498,34 +619,35 @@ const EditableDraggableTable = (props) => {
     {
       title: '是否恢复',
       dataIndex: 'needRecover',
-      width: '4%',
+      width: '5%',
       editable: true,
       render: (text, record) => formatRecover(record.needRecover),
     },
     {
       title: '参数',
       dataIndex: 'param',
-      width: '40%',
+      width: '15%',
       editable: true,
+      responsive: ['lg'],
     },
     {
       title: '资源',
       dataIndex: 'resource',
-      width: '3%',
+      width: '5%',
       editable: true,
       render: (text, record) => formatResource(record.resource),
     },
     {
       title: 'UI位置',
       dataIndex: 'position',
-      width: '2%',
+      width: '4%',
       editable: true,
 //      render: (text, record) => formatBool(record.visibleToUser),
     },
     {
       title: '用户可见',
       dataIndex: 'visibleToUser',
-      width: '3%',
+      width: '5%',
       editable: true,
       render: (text, record) => formatVisible(record.visibleToUser),
     },
@@ -604,6 +726,7 @@ const EditableDraggableTable = (props) => {
         pagination={false}
       />
       <Button
+        disabled={editingKey}
         onClick={handleAdd}
         type="primary"
         shape="circle"

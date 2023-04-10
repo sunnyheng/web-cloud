@@ -1,6 +1,8 @@
 
-import React, { useCallback, createContext, useState, useRef } from 'react';
+import React, { useCallback, createContext, useState, useRef, useEffect } from 'react';
 import {Collapse, Button, Form, Input, Select, message, Divider} from 'antd';
+
+import { useLocation } from 'react-router-dom'
 
 import locale from 'antd/es/locale/zh_CN';
 
@@ -13,12 +15,12 @@ const {Panel} = Collapse;
 const {TextArea} = Input
 
 
-
 {/*This is edit/update component and it include child component(table)*/}
 
 function UpdateForm() {
   const childFormRef = useRef()
   const [form] = Form.useForm();
+  let location = useLocation();
 
 // this is trigger in data in event('confirmWhenAuto','triggerCondition','triggerType','triggers')
   let [triggerInForm, setTriggerInForm] = useState({})
@@ -202,6 +204,30 @@ function UpdateForm() {
     return dataMap;
   }
 
+
+  useEffect(() => {
+    console.log('location:', location)
+    console.log('location.state1:', location.state)
+    let locState = location.state
+    console.log('locState:', locState)
+    if(locState && locState.dataList){
+        let previewData = locState.dataList
+        console.log('location.state.dataList:', location.state.dataList)
+        parseData(previewData)
+        location.state = {};
+        console.log('location.state2:', location.state)
+    }
+  },[location])
+
+  const cleanData = () => {
+
+//    form.resetFields();
+//    setTriggerInData([])
+//
+//    setTriggerOutData([])
+
+  }
+
   const searchData = ()=>{
       let id = form.getFieldsValue().id
 //  let bb = aa.
@@ -250,29 +276,88 @@ function UpdateForm() {
 //                onFinish={searchData}
                 >
             <Form.Item
-              label="模板编号"
+              label="场景编号(广场)"
               name="id"
-              /*rules={[
+              rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]}*/
+                  },]}
             >
               <Input allowClear />
             </Form.Item>
             <Form.Item
-              label="模板名称"
+              label="场景名称(广场)"
               name="name"
-              /*rules={[
+              rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]}*/>
+                  },]}>
               <Input allowClear />
             </Form.Item>
+            <Form.Item
+                name="type"
+                label="场景类型"
+                rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]} >
+                <Select
+                    placeholder="请选择"
+                    options={[
+                      {label:'预设',
+                      value:1},
+                      {label:'不可变',
+                      value:0},
+                    ]}
+                />
+            </Form.Item>
+            <Form.Item
+                name="enable"
+                label="是否可用"
+                rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]} >
+                <Select
+                    placeholder="请选择"
+                    options={[
+                    {label:'是',
+                      value:true},
+                      {label:'不是',
+                      value:false},
+                    ]}
+                />
+            </Form.Item>
+            <Form.Item
+                name="repeatTime"
+                label="重复次数"
+                rules={[
+                  {
+                    required: true,
+                    message: '不能为空',
+                  },]} >
+                <Select
+                    autosize="true"
+                    placeholder="请选择"
+                    options={[
+                    {label:'满足条件执行',
+                      value:-1},
+                      {label:'不执行',
+                      value:0},{label:'执行1次',
+                      value:1},
+                      {label:'执行2次',
+                      value:2},
+                    ]}
+                />
+            </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" onClick={searchData}>查询</Button>
-              <Button style={{
+                <Button type="primary" htmlType="delete" onClick={cleanData}>清空</Button>
+                <Button type="primary" htmlType="submit" onClick={searchData}>查询</Button>
+                <Button style={{
                         marginLeft: 5,
                         }}
                     type="primary" htmlType="upload" onClick={uploadData}>上传</Button>
@@ -288,63 +373,7 @@ function UpdateForm() {
                   },]}*/>
               <Input allowClear style={{width: 500}}/>
             </Form.Item>
-            <Form.Item
-                name="type"
-                label="类型"
-                /*rules={[
-                  {
-                    required: true,
-                    message: '不能为空',
-                  },]}*/ >
-                <Select
-                    placeholder="请选择"
-                    options={[
-                      {label:'预设数据',
-                      value:1},
-                      {label:'不可变数据',
-                      value:0},
-                    ]}
-                />
-            </Form.Item>
-            <Form.Item
-                name="enable"
-                label="是否可用"
-                /*rules={[
-                  {
-                    required: true,
-                    message: '不能为空',
-                  },]}*/ >
-                <Select
-                    placeholder="请选择"
-                    options={[
-                    {label:'是',
-                      value:true},
-                      {label:'不是',
-                      value:false},
-                    ]}
-                />
-            </Form.Item>
-            <Form.Item
-                name="repeatTime"
-                label="重复次数"
-                /*rules={[
-                  {
-                    required: true,
-                    message: '不能为空',
-                  },]} */>
-                <Select
-                    placeholder="请选择"
-                    options={[
-                    {label:'满足条件执行',
-                      value:-1},
-                      {label:'不执行',
-                      value:0},{label:'执行1次',
-                      value:1},
-                      {label:'执行2次',
-                      value:2},
-                    ]}
-                />
-            </Form.Item>
+
           </Form>
         </Panel>
       </Collapse>

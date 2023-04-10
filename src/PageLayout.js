@@ -45,25 +45,25 @@ const PageLayout: React.FC = () => {
             {
               key: '1',
               icon: <SearchOutlined />,
-              label: 'Search',
+              label: '查询场景',
               onClick: () => { navigate('/');}
             },
             {
               key: '2',
               icon: <UploadOutlined />,
-              label: 'Upload',
+              label: '上传场景(广场)',
               onClick: () => {navigate('/upload');}
             },
             {
               key: '3',
               icon: <SendOutlined />,
-              label: 'publish',
+              label: '发布场景',
               onClick: () => {navigate('/publish');}
             },
             {
               key: '4',
               icon: <FileAddOutlined />,
-              label: 'create/update',
+              label: '新增/编辑场景(广场)',
               onClick: () => {navigate('/update');}
             },
           ]}
@@ -74,7 +74,7 @@ const PageLayout: React.FC = () => {
             <p style={{display: 'inline'}}>{React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
-          })}</p><p style={{textAlign:'right', display: 'inline', fontSize:'35px'}}>ISSEC Scenario page</p>
+          })}</p><p style={{textAlign:'right', display: 'inline', fontSize:'35px'}}></p>
 
         </Header>
         <Content

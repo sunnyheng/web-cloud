@@ -8,17 +8,6 @@ import BlobTable from './BlobTable'
 
 var FileSaver = require('file-saver');
 
-const items = [
-  {
-    key: '1',
-    label: 'Action 1',
-  },
-  {
-    key: '2',
-    label: 'Action 2',
-  },
-];
-
 const {Panel} = Collapse;
 //const {Option} = Select;
 const {RangePicker} = DatePicker;
@@ -208,28 +197,12 @@ const NestedTable = () => {
             setData([])
         }
       })
-//      filter.mobile = values && values.mobile !== undefined ? values.mobile : '';
-//      filter.nickname = values && values.nickname !== undefined ? values.nickname : '';
-//      filter.channel_id = values && values.channel_id !== undefined ? values.channel_id : 0;
-//      filter.tag_key = values && values.tag_key !== undefined ? values.tag_key : '';
-//      if(values && values.create_time !== undefined){
-//        let min_create_time = parseInt(moment(values.create_time[0]).valueOf()/1000);
-//        let max_create_time = parseInt(moment(values.create_time[1]).valueOf()/1000);
-//        filter.min_create_time = min_create_time;
-//        filter.max_create_time = max_create_time;
-//      }else{
-//        filter.min_create_time = 0;
-//        filter.max_create_time = 0;
-//      }
     },[]
   )
 
   const reset = () => {
-//    console.log("Testing get the form values:", formValues.use_case_id)
-//    console.log("Testing get the form form.use_case_id:", form.use_case_id)
     form.resetFields();
-    //此处尤其要注意，resetFields表单重置后会重新mount组件，因此不必在这里重新调用请求api的接口。
-    //重置之后，会自动调用搜索列表的方法。
+
   }
 
   return (
@@ -262,7 +235,6 @@ const NestedTable = () => {
                 options={[
                   { value: 'ScenarioSquare', label: '广场模版数据' },
                   { value: 'ScenarioUser', label: '用户自定义场景' },
-
                 ]}
               />
             </Form.Item>

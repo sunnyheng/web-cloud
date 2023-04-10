@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Table, Space, message } from 'antd';
+import { Table, Space, message, Button } from 'antd';
+
+import { useNavigate } from 'react-router-dom'
 
 {/* THis is summary component, show all summary content from blob list to table. */}
 
-var FileSaver = require('file-saver');
-
 const BlobTable = (props) => {
 //    const {data} = this.props
+    const navigate = useNavigate();
     let type = props.type
 
     const columns = [
@@ -32,9 +33,10 @@ const BlobTable = (props) => {
       },
       {
         title: '预览',
-        dataIndex: 'download',
-        key: 'download',
-        render: (text, record) => <a onClick={(e)=>download(record)}>预览</a>,
+        dataIndex: 'preview',
+        key: 'preview',
+        render: (text, record) => <a onClick={(e)=>preview(record)}>预览1</a>,
+//        render: (text, record) => <Button><Link to={pathname:"/update", query:record}></Link>预览</Button>,
       },
       {
       title: '删除',
@@ -63,14 +65,12 @@ const BlobTable = (props) => {
 
     }
 
-    const download = (record) => {
-        let name = record.name;
-        let timestamp = Date.parse(new Date());
-        let fileName = name + "_" + timestamp + ".json"
+    const preview = (record) => {
 
-        let content = JSON.stringify(record)
-        let blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-        FileSaver.saveAs(blob, fileName);
+        let recordArray = [record];
+        console.log("111111111111111:", recordArray)
+        navigate("/update", {state:{dataList: recordArray}, replace: true});
+
 
     };
     return (
