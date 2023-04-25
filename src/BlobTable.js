@@ -35,7 +35,7 @@ const BlobTable = (props) => {
         title: '预览',
         dataIndex: 'preview',
         key: 'preview',
-        render: (text, record) => <a onClick={(e)=>preview(record)}>预览1</a>,
+        render: (text, record) => <a onClick={(e)=>preview(record)}>预览</a>,
 //        render: (text, record) => <Button><Link to={pathname:"/update", query:record}></Link>预览</Button>,
       },
       {
@@ -68,7 +68,6 @@ const BlobTable = (props) => {
     const preview = (record) => {
 
         let recordArray = [record];
-        console.log("111111111111111:", recordArray)
         navigate("/update", {state:{dataList: recordArray}, replace: true});
 
 

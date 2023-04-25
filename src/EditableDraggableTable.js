@@ -49,7 +49,7 @@ const EditableDraggableTable = (props) => {
   const [visibleUser, setVisibleUser] = useState(0)
   const [positionVal, setPositionVal] = useState(1)
 
-  const [color, setColor] = useState('#333');
+  const [color, setColor] = useState('');
 
   const allIdOptions = {
       1: [
@@ -149,6 +149,11 @@ const EditableDraggableTable = (props) => {
     }
   }
 
+  const onChangeColor = (e) => {
+    console.log("onChange", e.hex);
+    setColor(e.hex);
+  };
+
   const nodeElement = (dataIndex) =>{
     if(dataIndex ==='category'){
         return (
@@ -189,10 +194,22 @@ const EditableDraggableTable = (props) => {
                 )
             }
         }
-//        if(categoryId===2){
-//            if(actionId===11||actionId==33){
-//            }
-//        }
+        if(categoryId===2){
+            if([1,2,31,32,61,62,63].includes(actionId)){
+                return(
+                  <Select allowClear placeholder="选择">
+                    <Option key={1} value={true}>开启</Option>
+                    <Option key={2} value={false}>关闭</Option>
+                  </Select>
+                )
+            }
+            if(actionId===11||actionId===33){
+                return <InputNumber min={16} max={32} step="0.1" />
+            }
+            if(actionId===6||actionId===36){
+                return <InputNumber min={1} max={8} />
+            }
+        }
 
         if(categoryId ===3){
             if(actionId===1||actionId===11){
@@ -220,19 +237,19 @@ const EditableDraggableTable = (props) => {
                 return <InputNumber min={5} max={100} />
             }
             if(actionId===3){
-                return <SketchPicker color={color} onChangeComplete={(color: any)=>setColor(color.hex)} />
+                return <SketchPicker color={color} onChange={onChangeColor} />
             }
             else{ //11，12，13
                 return <Input placeholder="颜色" />;
             }
         }
         if(categoryId===5){
-            if(actionId===1){
+            if(actionId==="1"){
                 return(
                   <Select allowClear placeholder="选择">
-                    <Option key="5-1-1" value={1}>全关</Option>
-                    <Option key="5-1-2" value={2}>全开</Option>
-                    <Option key="5-1-3" value={3}>通风</Option>
+                    <Option key="5-1-1" value="1">全关</Option>
+                    <Option key="5-1-2" value="2">全开</Option>
+                    <Option key="5-1-3" value="3">通风</Option>
                   </Select>
                 )
             }
@@ -266,7 +283,6 @@ const EditableDraggableTable = (props) => {
                 )
             }
         }
-
 
     }
     if(dataIndex === "resource"){
@@ -369,13 +385,27 @@ const EditableDraggableTable = (props) => {
         setActionId(record.id)
     }
   };
+
+  // this method uses to format color value, when get row by form.validateFields, it will include detailed color information
+  // But we just need "hex" value
+  const parseColorRow = (row) => {
+    if(row.category===4&&row.id===3){
+        let rowParam = row.param
+        if(rowParam instanceof Object){
+            let colorParam = rowParam.hex;
+            row.param = colorParam;
+        }
+    }
+    return row;
+  }
+
   // saveCell
   const saveCell = async (key) => {
 
     try {
-      const row = await form.validateFields();
-      console.log("key:", key)
-      console.log("key:", form.getFieldsValue())
+      let tmpRow = await form.validateFields();
+      let row = parseColorRow(tmpRow)
+      console.log("key:", key, row)
 //      if((row.position===0 && row.visibleToUser===true)||(row.position>0 && row.visibleToUser===false)){
 
       const newData = [...dataSource];
@@ -544,6 +574,46 @@ const EditableDraggableTable = (props) => {
     }
   }
 
+  const formatParam = (val) => {
+    let tmpCategory = val.category;
+    let tmpId = val.id;
+    let tmpParam = val.param;
+    if(tmpCategory===1&&[1,2,3,4,5].includes(tmpId)){
+        return tmpParam +" %"
+    }
+    if(tmpCategory===2){
+        if([1,2,31,32,61,62,63].includes(tmpId)){
+            return tmpParam===true? "开启":"关闭"
+        }
+        if(tmpId===11||tmpId===33){
+            return tmpParam +" ℃"
+        }
+        if(tmpId===6||tmpId===36){
+            return tmpParam +" 挡"
+        }
+    }
+    if(tmpCategory===3){
+        if(tmpId===1||tmpId===11){
+            let pArray = tmpParam.split(",");
+            let result = "";
+//            座椅, 靠背, 靠背支撑, 脚靠, 前坐垫, 后坐垫,头枕,腿枕
+            return "座椅后移"+pArray[0]+"%, 靠背后倾"+pArray[1]+"%, 靠背支撑"+pArray[2]+"%, 脚靠"+pArray[3]+"%, 前座垫"+pArray[4]+"%, 后座垫"+pArray[5]+"%, 头枕"+pArray[6]+"%, 腿枕"+pArray[7]+"%"
+        }
+    }
+    if(tmpCategory===5&&tmpId===1){
+        if(tmpParam==="1"){return "全关"}
+        if(tmpParam==="2"){return "全开"}
+        else{return "通风"}
+    }
+    if(tmpCategory===4&&tmpId===3){
+//      tmpParam instanceof Object
+        return <div style={{backgroundColor: tmpParam,  border: "1px",  width:"40px", height:"20px"}}></div>
+    }
+    else{
+        return tmpParam
+    }
+  }
+
   const formatVisible = (val) => {
     console.log("Testing formatVisible:", val)
     if(val == undefined || val){
@@ -629,6 +699,7 @@ const EditableDraggableTable = (props) => {
       width: '15%',
       editable: true,
       responsive: ['lg'],
+      render: (text, record) => formatParam(record),
     },
     {
       title: '资源',

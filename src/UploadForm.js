@@ -106,11 +106,11 @@ const UploadForm = () => {
             wrapperCol={{ flex: 1 }}
             form={form}
             colon={false}
-            style={{ maxWidth: 600 }}
+            style={{ maxWidth: 1200 }}
             onFinish={handleSubmit}
           >
           <Form.Item label="场景内容" name="scenario data" rules={[{ required: true }]}>
-            <Input.TextArea rows={4} placeholder="请输入场景内容"
+            <Input.TextArea rows={10} placeholder="请输入场景内容"
             onChange={e => setUploadContent(e.target.value)} />
           </Form.Item>
 

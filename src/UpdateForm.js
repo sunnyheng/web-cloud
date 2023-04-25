@@ -289,21 +289,21 @@ function UpdateForm() {
             <Form.Item
               label="场景名称(广场)"
               name="name"
-              rules={[
+              /*rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]}>
+                  },]}*/>
               <Input allowClear />
             </Form.Item>
             <Form.Item
                 name="type"
                 label="场景类型"
-                rules={[
+                /*rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]} >
+                  },]}*/ >
                 <Select
                     placeholder="请选择"
                     options={[
@@ -317,11 +317,11 @@ function UpdateForm() {
             <Form.Item
                 name="enable"
                 label="是否可用"
-                rules={[
+                /*rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]} >
+                  },]}*/ >
                 <Select
                     placeholder="请选择"
                     options={[
@@ -335,11 +335,11 @@ function UpdateForm() {
             <Form.Item
                 name="repeatTime"
                 label="重复次数"
-                rules={[
+                /*rules={[
                   {
                     required: true,
                     message: '不能为空',
-                  },]} >
+                  },]}*/ >
                 <Select
                     autosize="true"
                     placeholder="请选择"

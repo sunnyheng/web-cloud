@@ -7,7 +7,7 @@ import {
   SearchOutlined,
   FileAddOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
+import { Button, Layout, Menu, theme } from 'antd';
 
 import {
   useNavigate,
@@ -30,6 +30,10 @@ const PageLayout: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  }
+
   const navigate = useNavigate();
 
   return (
@@ -37,6 +41,7 @@ const PageLayout: React.FC = () => {
 {/*}      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} theme="light"> */}
       <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
         <div className="logo" />
+        <Button type="default" onClick={toggleCollapsed} style={{marginBottom: 5}}>{collapsed ? <MenuUnfoldOutlined />:<MenuFoldOutlined />}</Button>
         <Menu
           theme="light"
           mode="inline"
@@ -70,18 +75,14 @@ const PageLayout: React.FC = () => {
         />
       </Sider>
       <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer, justifyContent:'center', alignItems:'center'}} layout="inline">
-            <p style={{display: 'inline'}}>{React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: 'trigger',
-            onClick: () => setCollapsed(!collapsed),
-          })}</p><p style={{textAlign:'right', display: 'inline', fontSize:'35px'}}></p>
-
+        <Header style={{ padding: 0, background: colorBgContainer, textAlign:'center', fontSize: 20}} layout="inline">
+                PATAC CLOUD WEB
         </Header>
         <Content
           style={{
             margin: '24px 16px',
             padding: 24,
-            minHeight: 280,
+            minHeight: 780,
             background: colorBgContainer,
           }}
         >
@@ -94,7 +95,7 @@ const PageLayout: React.FC = () => {
         </Content>
         <Footer
           style={{
-            textAlign: 'center',
+            textAlign: 'right',
           }}
         >
           PATAC ISSEC ©2023

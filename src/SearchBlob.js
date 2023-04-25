@@ -29,35 +29,35 @@ function SearchBlob() {
 
       const url = name? url_single: url_all
 //      console.log("url:", url)
-      fetch('/mock/data.json').then(res => {
-      if(res.ok){
-        res.json()
-        .then(data =>{
-          console.log('data:', data)
-          setData(data)
-        })
-      }
-    })
+//      fetch('/mock/data.json').then(res => {
+//      if(res.ok){
+//        res.json()
+//        .then(data =>{
+//          console.log('data:', data)
+//          setData(data)
+//        })
+//      }
+//    })
 
-//      fetch(url).then(res =>{
-//        console.log(res)
-//        if(res.status==200){
-//            message.success('success')
-//            console.log("response:", res)
-//            res.json().then(data => {
-//                console.log('data:', data)
-//                setData(data)
-//            })
-//        }
-//        else{
-//            message.error(res.statusText)
-//            setData([])
-//            }
-//      })
-//      .catch(err => {
-//        console.log(err);
-//        message.error(err)
-//      })
+      fetch(url).then(res =>{
+        console.log(res)
+        if(res.status==200){
+            message.success('success')
+            console.log("response:", res)
+            res.json().then(data => {
+                console.log('data:', data)
+                setData(data)
+            })
+        }
+        else{
+            message.error(res.statusText)
+            setData([])
+            }
+      })
+      .catch(err => {
+        console.log(err);
+        message.error(err)
+      })
     },[]
   )
 
